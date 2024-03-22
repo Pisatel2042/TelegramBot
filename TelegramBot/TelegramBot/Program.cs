@@ -54,8 +54,7 @@ partial class Program
 
             if (message.Text == "/start")
             {
-                await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
-                var keyboard = new Telegram.Bot.Types.ReplyMarkups.InlineKeyboardMarkup(new[]
+                var keyboard = new InlineKeyboardMarkup(new[]
 {
                         new [] // first row
                         {
@@ -69,9 +68,9 @@ partial class Program
                         }
                     });
                 await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
-
-
-
+             //  await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
+                return;
+               
             }
             else if (message.Text == "/inline")
             {
@@ -89,11 +88,6 @@ partial class Program
                 return;
             }
             await ShowButton(botClient, update);
-
-
-
-
-
             Console.WriteLine($"{user!.FirstName} ({user.Id}) Время: {message.Date} написал сообщение: {message!.Text}");
         }
 
@@ -103,19 +97,11 @@ partial class Program
 
 
     }
-    async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+     async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
-    async void proccesUpdate(Update update, ITelegramBotClient botClient)
-    {
-
-    }
-
-
-
-
-
+   
     public async static Task ShowButton(ITelegramBotClient botClient, Update update)
     {
         var message = update.Message;
@@ -143,8 +129,14 @@ partial class Program
 
         }
     }
+    public async static Task Inlinck(ITelegramBotClient botClient, Update update)
+    {
+        await botClient.SendTextMessageAsync(update.Message!.Chat.Id, "ПОка");   
+    }
 }
 
+
+ 
 
 
 

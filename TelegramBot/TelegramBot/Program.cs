@@ -46,19 +46,104 @@ partial class Program
     {
 
         var message = update.Message;
+        var ChatId = message!.Chat!.Id!;
+        var user = message.From;
+  
+
+        //if (message != null && message.Text != null)
+        //{
+
+        //    if (message.Text == "/start" )
+        //    {   
+        //        var keyboard = new InlineKeyboardMarkup(new[]
+        //            {
+        //                new [] // first row
+        //                {
+        //                    InlineKeyboardButton.WithUrl("1 2","www.google.com"),
+        //                    InlineKeyboardButton.WithCallbackData("☢️☣️что сегодня в столовке☣️☢️"),
+        //                },
+        //                new [] // second row
+        //                {
+        //                    InlineKeyboardButton.WithCallbackData("2.1"),
+        //                    InlineKeyboardButton.WithCallbackData("2.2"),
+        //                }
+        //            });
+        //        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
+        //     //  await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
+            
+               
+        //    }
+        //     if (message.Text == "/inline")
+        //    {
+        //        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+        //        {
+        //                    new KeyboardButton[] { "Понедельник" },
+        //                    new KeyboardButton[] { "Вторник" },
+        //                    new KeyboardButton[] { "Среда" },
+        //                    new KeyboardButton[] { "Четверг" },
+        //                    new KeyboardButton[] { "Пятница" },
+        //                    });
+        //        await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
+        //        await ShowButton(botClient, update);
+                
+
+            
+        //    }
+        //     if (message.Text == "привет")
+        //    {
+        //        await botClient.SendTextMessageAsync(ChatId, "Привет ");
+        //        return;
+        //    }
+        //     return;
+            
+        //}
+        
+      if(message != null && message.Text != null) 
+        {
+            if (message.Text == "/start")
+            {
+                
+                //await botClient.SendTextMessageAsync(ChatId, "Выбире \n /Inline \n /Reply");
+                await ShowInlineButton(botClient, update);
+                return;
+            }
+           else if (message.Text == "/Inline")
+            {
+                await ShowReplyButton(botClient, update);
+                return;
+               
+            }
+            await ShowReplyButtonData(botClient, update);
+            if (message.Text == "/Reply")
+            {
+                await botClient.SendTextMessageAsync(ChatId, "cat");
+                return;
+            }
+        }
+
+
+        Console.WriteLine($"{user!.FirstName} ({user.Id}) Время: {message!.Date} написал сообщение: {message!.Text}");
+
+            
+
+
+
+
+
+
+    }
+
+    public async static  Task inlineButton(ITelegramBotClient botClient, Update update)
+    {
+        var message = update.Message;
         var ChatId = message!.Chat.Id;
         var user = message.From;
 
-        if (message != null && message.Text != null)
-        {
-
-            if (message.Text == "/start")
-            {
-                var keyboard = new InlineKeyboardMarkup(new[]
-{
+        var keyboard = new InlineKeyboardMarkup(new[]
+                    {
                         new [] // first row
                         {
-                            InlineKeyboardButton.WithUrl("12","www.google.com"),
+                            InlineKeyboardButton.WithUrl("1 2","www.google.com"),
                             InlineKeyboardButton.WithCallbackData("☢️☣️что сегодня в столовке☣️☢️"),
                         },
                         new [] // second row
@@ -67,46 +152,20 @@ partial class Program
                             InlineKeyboardButton.WithCallbackData("2.2"),
                         }
                     });
-                await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
-             //  await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
-                return;
-               
-            }
-            else if (message.Text == "/inline")
-            {
-                ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-                {
-                            new KeyboardButton[] { "Понедельник" },
-                            new KeyboardButton[] { "Вторник" },
-                            new KeyboardButton[] { "Среда" },
-                            new KeyboardButton[] { "Четверг" },
-                            new KeyboardButton[] { "Пятница" },
-                            });
-                await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
-
-
-                return;
-            }
-            await ShowButton(botClient, update);
-            Console.WriteLine($"{user!.FirstName} ({user.Id}) Время: {message.Date} написал сообщение: {message!.Text}");
-        }
-
-
-
-
-
-
+        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
+        return;
     }
      async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
    
-    public async static Task ShowButton(ITelegramBotClient botClient, Update update)
+    public async static Task ShowReplyButtonData(ITelegramBotClient botClient, Update update)
     {
         var message = update.Message;
         var ChatId = message!.Chat.Id;
 
+       
         switch (message.Text)
         {
 
@@ -129,10 +188,54 @@ partial class Program
 
         }
     }
-    public async static Task Inlinck(ITelegramBotClient botClient, Update update)
+    public async static Task ShowReplyButton(ITelegramBotClient botClient, Update update)
     {
-        await botClient.SendTextMessageAsync(update.Message!.Chat.Id, "ПОка");   
+        var message = update.Message;
+        var ChatId = message!.Chat.Id;
+
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+                                   {
+                            new KeyboardButton[] { "Понедельник" },
+                            new KeyboardButton[] { "Вторник" },
+                            new KeyboardButton[] { "Среда" },
+                            new KeyboardButton[] { "Четверг" },
+                            new KeyboardButton[] { "Пятница" },
+                            });
+        await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
     }
+    public async static Task ShowInlineButton(ITelegramBotClient botClient, Update update)
+    {
+        var message = update.Message;
+        var ChatId = message!.Chat.Id;
+        var user = message.From;
+
+
+        var inlineKeyboard = new InlineKeyboardMarkup(new[]
+            {   
+            
+                
+                 new [] // first row
+                        {
+                            InlineKeyboardButton.WithUrl("1 2","www.google.com"),
+                            InlineKeyboardButton.WithCallbackData("что сегодня в столовке"),
+                        },
+                 new [] // second row
+                        {
+                            InlineKeyboardButton.WithCallbackData("2.1"),
+                            InlineKeyboardButton.WithCallbackData("2.2"),
+                        }
+            });
+        //var inlineKeyboard = new InlineKeyboardMarkup(new[]
+        //    {
+        //        InlineKeyboardButton.WithUrl("Go url 1", "https://www.google.com/"),
+        //        InlineKeyboardButton.WithUrl("Go url 2", "https://www.bing.com/")
+        //    });
+        
+        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: inlineKeyboard);
+        return;
+    }
+
 }
 
 

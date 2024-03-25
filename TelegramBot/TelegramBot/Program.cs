@@ -46,85 +46,57 @@ partial class Program
     {
 
         var message = update.Message;
-        var ChatId = message!.Chat!.Id!;
-        var user = message.From;
-  
-
-        //if (message != null && message.Text != null)
-        //{
-
-        //    if (message.Text == "/start" )
-        //    {   
-        //        var keyboard = new InlineKeyboardMarkup(new[]
-        //            {
-        //                new [] // first row
-        //                {
-        //                    InlineKeyboardButton.WithUrl("1 2","www.google.com"),
-        //                    InlineKeyboardButton.WithCallbackData("☢️☣️что сегодня в столовке☣️☢️"),
-        //                },
-        //                new [] // second row
-        //                {
-        //                    InlineKeyboardButton.WithCallbackData("2.1"),
-        //                    InlineKeyboardButton.WithCallbackData("2.2"),
-        //                }
-        //            });
-        //        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
-        //     //  await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
-            
-               
-        //    }
-        //     if (message.Text == "/inline")
-        //    {
-        //        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-        //        {
-        //                    new KeyboardButton[] { "Понедельник" },
-        //                    new KeyboardButton[] { "Вторник" },
-        //                    new KeyboardButton[] { "Среда" },
-        //                    new KeyboardButton[] { "Четверг" },
-        //                    new KeyboardButton[] { "Пятница" },
-        //                    });
-        //        await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
-        //        await ShowButton(botClient, update);
-                
-
-            
-        //    }
-        //     if (message.Text == "привет")
-        //    {
-        //        await botClient.SendTextMessageAsync(ChatId, "Привет ");
-        //        return;
-        //    }
-        //     return;
-            
-        //}
+        var ChatId = message?.Chat.Id;
+        var user = message?.From;
         
-      if(message != null && message.Text != null) 
+       
+
+
+
+        if (message != null && message.Text != null)
         {
             if (message.Text == "/start")
             {
-                
+
                 //await botClient.SendTextMessageAsync(ChatId, "Выбире \n /Inline \n /Reply");
-                await ShowInlineButton(botClient, update);
+                await inlineButton(botClient, update);
+                if (update.CallbackQuery != null)
+                {
+                    if (update.CallbackQuery.Data == "button1")
+                    {
+                        await botClient.SendTextMessageAsync(ChatId, "Ну привет зайка");
+                        return;
+                    }
+                }
+                //await ButtonInlineClickProcessing(botClient, update);
+                if (message.Text == "Анегдоты")
+                {
+
+                }
                 return;
             }
-           else if (message.Text == "/Inline")
+            if (message.Text == "/stop")
+            {
+
+            }
+            else if (message.Text == "/Inline")
             {
                 await ShowReplyButton(botClient, update);
                 return;
-               
+
             }
-            await ShowReplyButtonData(botClient, update);
+            await ButtonReplyClickProcessing(botClient, update);
             if (message.Text == "/Reply")
             {
-                await botClient.SendTextMessageAsync(ChatId, "cat");
+                await botClient.SendTextMessageAsync(ChatId!, "cat");
                 return;
             }
         }
 
 
-        Console.WriteLine($"{user!.FirstName} ({user.Id}) Время: {message!.Date} написал сообщение: {message!.Text}");
+        Console.WriteLine($"{user.FirstName} ({user.Id}) Время: {message.Date} написал сообщение: {message.Text}");
 
-            
+
 
 
 
@@ -133,7 +105,7 @@ partial class Program
 
     }
 
-    public async static  Task inlineButton(ITelegramBotClient botClient, Update update)
+    public async static Task inlineButton(ITelegramBotClient botClient, Update update)
     {
         var message = update.Message;
         var ChatId = message!.Chat.Id;
@@ -143,29 +115,31 @@ partial class Program
                     {
                         new [] // first row
                         {
-                            InlineKeyboardButton.WithUrl("Игра Орел Решка ","https://clck.ru/39eZDB"),
-                            InlineKeyboardButton.WithCallbackData("что сегодня в столовке☣"),
+                            InlineKeyboardButton.WithCallbackData("🎰 Игра Орел Решка 🎰","button1"),
+                            InlineKeyboardButton.WithCallbackData("☣что сегодня в столовке☣","2"),
                         },
                         new [] // second row
                         {
-                            InlineKeyboardButton.WithCallbackData("Расписание на сегодня "),
-                            InlineKeyboardButton.WithCallbackData("Здесь ничего нет "),
+                            InlineKeyboardButton.WithUrl("Расписание на сегодня ","https://clck.ru/39eZDB"),
+                            InlineKeyboardButton.WithCallbackData("Анекдоты"),
+
                         }
                     });
-        await botClient.SendTextMessageAsync(ChatId, "Привет что хочешь ?", replyMarkup: keyboard);
+        await botClient.SendTextMessageAsync(ChatId, " Привет что хочешь ?", replyMarkup: keyboard);
         return;
+
     }
-     async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
-   
-    public async static Task ShowReplyButtonData(ITelegramBotClient botClient, Update update)
+
+    public async static Task ButtonReplyClickProcessing(ITelegramBotClient botClient, Update update)
     {
         var message = update.Message;
         var ChatId = message!.Chat.Id;
 
-       
+
         switch (message.Text)
         {
 
@@ -212,9 +186,9 @@ partial class Program
 
 
         var inlineKeyboard = new InlineKeyboardMarkup(new[]
-            {   
-            
-                
+            {
+
+
                  new [] // first row
                         {
                             InlineKeyboardButton.WithUrl("1 2","www.google.com"),
@@ -231,15 +205,54 @@ partial class Program
         //        InlineKeyboardButton.WithUrl("Go url 1", "https://www.google.com/"),
         //        InlineKeyboardButton.WithUrl("Go url 2", "https://www.bing.com/")
         //    });
-        
+
         await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: inlineKeyboard);
         return;
     }
 
+
+    public async static Task ButtonInlineClickProcessing(ITelegramBotClient botClient, Update update)
+    {
+        CallbackQuery callbackQuery = new CallbackQuery();
+        var message = update.Message;
+        var ChatId = message!.Chat.Id;
+        var user = message.From;
+
+        //switch(update.Type) 
+        //{
+        //    case UpdateType.CallbackQuery:
+        //        {
+        //            var callbackQuery = update.CallbackQuery;
+        //            var User = callbackQuery!.From;
+        //            var chat = callbackQuery.Message!.Chat;
+        //            switch (callbackQuery.Data)
+        //            {
+        //                case "1":
+        //                    {
+        //                        await botClient.SendTextMessageAsync(ChatId, "Привт зайка");
+        //                        return;
+        //                    }
+        //            }
+
+        //        }
+        //        break;
+        //}
+       //if(update.CallbackQuery != null)
+       // {
+       //     if (update.CallbackQuery.Data == "button1")
+       //     {
+       //         await botClient.SendTextMessageAsync(ChatId, "Ну привет зайка");
+       //         return;
+       //     }
+       // }
+    }
+
+
+
 }
 
 
- 
+
 
 
 
@@ -251,3 +264,51 @@ partial class Program
 //            new List<KeyboardButton>{ new KeyboardButton(TEXT_3), new KeyboardButton(TEXT_4), },
 //    };
 //return new ReplyKeyboardMarkup(keyboard);
+
+//if (message != null && message.Text != null)
+//{
+
+//    if (message.Text == "/start" )
+//    {   
+//        var keyboard = new InlineKeyboardMarkup(new[]
+//            {
+//                new [] // first row
+//                {
+//                    InlineKeyboardButton.WithUrl("1 2","www.google.com"),
+//                    InlineKeyboardButton.WithCallbackData("☢️☣️что сегодня в столовке☣️☢️"),
+//                },
+//                new [] // second row
+//                {
+//                    InlineKeyboardButton.WithCallbackData("2.1"),
+//                    InlineKeyboardButton.WithCallbackData("2.2"),
+//                }
+//            });
+//        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
+//     //  await botClient.SendTextMessageAsync(ChatId, $"Привет {user!.FirstName}");
+
+
+//    }
+//     if (message.Text == "/inline")
+//    {
+//        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+//        {
+//                    new KeyboardButton[] { "Понедельник" },
+//                    new KeyboardButton[] { "Вторник" },
+//                    new KeyboardButton[] { "Среда" },
+//                    new KeyboardButton[] { "Четверг" },
+//                    new KeyboardButton[] { "Пятница" },
+//                    });
+//        await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
+//        await ShowButton(botClient, update);
+
+
+
+//    }
+//     if (message.Text == "привет")
+//    {
+//        await botClient.SendTextMessageAsync(ChatId, "Привет ");
+//        return;
+//    }
+//     return;
+
+//}

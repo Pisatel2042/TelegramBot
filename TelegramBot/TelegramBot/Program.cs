@@ -143,16 +143,16 @@ partial class Program
                     {
                         new [] // first row
                         {
-                            InlineKeyboardButton.WithUrl("1 2","www.google.com"),
-                            InlineKeyboardButton.WithCallbackData("☢️☣️что сегодня в столовке☣️☢️"),
+                            InlineKeyboardButton.WithUrl("Игра Орел Решка ","https://clck.ru/39eZDB"),
+                            InlineKeyboardButton.WithCallbackData("что сегодня в столовке☣"),
                         },
                         new [] // second row
                         {
-                            InlineKeyboardButton.WithCallbackData("2.1"),
-                            InlineKeyboardButton.WithCallbackData("2.2"),
+                            InlineKeyboardButton.WithCallbackData("Расписание на сегодня "),
+                            InlineKeyboardButton.WithCallbackData("Здесь ничего нет "),
                         }
                     });
-        await botClient.SendTextMessageAsync(ChatId, "Жамкни!", replyMarkup: keyboard);
+        await botClient.SendTextMessageAsync(ChatId, "Привет что хочешь ?", replyMarkup: keyboard);
         return;
     }
      async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)

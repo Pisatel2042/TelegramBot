@@ -27,15 +27,16 @@ partial class Program
 
     static async void Start()
     {
-
+         
         CancellationTokenSource cts = new();
         _receiverOptions = new();
-        var client = new TelegramBotClient("7082038598:AAHqMCO_r1LPZlid_Bv09XWoKgovjPFiPME");
-        client.StartReceiving(
+        var Botclient = new TelegramBotClient("7082038598:AAHqMCO_r1LPZlid_Bv09XWoKgovjPFiPME");
+        Botclient.StartReceiving(
      updateHandler: UpdateHandler,
      pollingErrorHandler: ErrorHandler,
      receiverOptions: _receiverOptions,
      cancellationToken: cts.Token);
+        
 
 
     }
@@ -60,7 +61,7 @@ partial class Program
 
                 //await botClient.SendTextMessageAsync(ChatId, "Выбире \n /Inline \n /Reply");
                 await ShowinlineButton(botClient, update);
-
+                
             
                 return;
             }
@@ -84,8 +85,10 @@ partial class Program
             }
 
         }
+        
 
 
+       
         // Console.WriteLine($"{message!.From.FirstName} ({message.From.Id}) Время: {message.Date} написал сообщение: {message.Text}");
 
 
@@ -123,82 +126,71 @@ partial class Program
     }
     public static async Task ButtonInlineClickProcessing(ITelegramBotClient botClient, Update update)
     {   //CancellationToken cancellationToken = new CancellationToken();
-
+        CallbackQuery callbackQuery = new CallbackQuery();
         //  var message = update.Message;
         //  var ChatId = message!.Chat.Id;
         //  var user = message.From;
 
-        //switch(update.Type) 
+     
+      switch(update.Type) 
+        {
+            case UpdateType.CallbackQuery: 
+                {
+                    var chatId = update.CallbackQuery.Message.Chat.Id;
+                    var pressedButtonID = update.CallbackQuery.Data;
+                    Console.WriteLine($"go xyz{pressedButtonID}");
+                }
+                break;
+            default:
+                return;
+        }
+      
+        //Console.WriteLine($"нажал на кнопку:");
+        //switch (update.Type)
         //{
         //    case UpdateType.CallbackQuery:
+        //        var callbackQuery = update.CallbackQuery;
+        //        var user = callbackQuery.From;
+        //        Console.WriteLine($"{user.FirstName} ({user.Id}) нажал на кнопку: {callbackQuery.Data}");
+        //        var chat = callbackQuery.Message.Chat;
+        //        switch (callbackQuery.Data)
         //        {
-        //            var callbackQuery = update.CallbackQuery;
-        //            var User = callbackQuery!.From;
-        //            var chat = callbackQuery.Message!.Chat;
-        //            switch (callbackQuery.Data)
-        //            {
-        //                case "1":
-        //                    {
-        //                        await botClient.SendTextMessageAsync(ChatId, "Привт зайка");
-        //                        return;
-        //                    }
-        //            }
+        //            case "button1":
+        //                {
+        //                    await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+        //                    await botClient.SendTextMessageAsync(chat.Id, "ты нажал на кнопку 1");
+        //                    return;
+        //                }
+        //            case "button2":
+        //                {
 
+        //                    await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Тут может быть ваш текст!");
+        //                    await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
+        //                    return;
+        //                }
+        //            case "button3":
+        //                {
+        //                    // А тут мы добавили еще showAlert, чтобы отобразить пользователю полноценное окно
+        //                    await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "А это полноэкранный текст!", showAlert: true);
+        //                    await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
+        //                    return;
+        //                }
         //        }
-        //        break;
-        //}
-
-        //if(update.CallbackQuery!.Data == "button1")
-        //{
-        //    await botClient.SendTextMessageAsync(update.CallbackQuery.Message!.Chat.Id, "Привет соска" ,cancellationToken: cancellationToken);
         //        return;
+        //        //if (update.Type == UpdateType.CallbackQuery)
+        //        //{
+        //        //    CallbackQuery callbackQuery = update.CallbackQuery!;
+        //        //    Console.WriteLine("ну Привет ");
+        //        //}
+        //        //else
+        //        //{
+        //        //    return;
+        //        //}
+
         //}
-
-        Console.WriteLine($"нажал на кнопку:");
-        switch (update.Type)
-        {
-            case UpdateType.CallbackQuery:
-                var callbackQuery = update.CallbackQuery;
-                var user = callbackQuery.From;
-                Console.WriteLine($"{user.FirstName} ({user.Id}) нажал на кнопку: {callbackQuery.Data}");
-                var chat = callbackQuery.Message.Chat;
-                switch (callbackQuery.Data)
-                {
-                    case "button1":
-                        {
-                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                            await botClient.SendTextMessageAsync(chat.Id, "ты нажал на кнопку 1");
-                            return;
-                        }
-                    case "button2":
-                        {
-
-                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Тут может быть ваш текст!");
-                            await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
-                            return;
-                        }
-                    case "button3":
-                        {
-                            // А тут мы добавили еще showAlert, чтобы отобразить пользователю полноценное окно
-                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "А это полноэкранный текст!", showAlert: true);
-                            await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
-                            return;
-                        }
-                }
-                return;
-                //if (update.Type == UpdateType.CallbackQuery)
-                //{
-                //    CallbackQuery callbackQuery = update.CallbackQuery!;
-                //    Console.WriteLine("ну Привет ");
-                //}
-                //else
-                //{
-                //    return;
-                //}
-
-        }
-
+        
     }
+    
     async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -247,10 +239,10 @@ partial class Program
                             new KeyboardButton[] { "Пятница" },
                             });
         await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
+                                return;
     }
 
 
-                                return;
 
 }
 

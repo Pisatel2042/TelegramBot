@@ -46,11 +46,11 @@ partial class Program
     {
 
         var message = update.Message;
-      //  var ChatId = message.Chat.Id;
+        //  var ChatId = message.Chat.Id;
         //var user = message.From;
 
 
-       
+
 
 
         if (message != null && message.Text != null)
@@ -60,13 +60,11 @@ partial class Program
 
                 //await botClient.SendTextMessageAsync(ChatId, "Выбире \n /Inline \n /Reply");
                 await ShowinlineButton(botClient, update);
-                
-                if (message.Text == "Анегдоты")
-                {
 
-                }
+            
                 return;
             }
+
             await ButtonInlineClickProcessing(botClient, update);
             if (message.Text == "/stop")
             {
@@ -84,11 +82,11 @@ partial class Program
                 await botClient.SendTextMessageAsync(message.Chat.Id!, "cat");
                 return;
             }
-            
+
         }
 
 
-       // Console.WriteLine($"{message!.From.FirstName} ({message.From.Id}) Время: {message.Date} написал сообщение: {message.Text}");
+        // Console.WriteLine($"{message!.From.FirstName} ({message.From.Id}) Время: {message.Date} написал сообщение: {message.Text}");
 
 
 
@@ -109,19 +107,96 @@ partial class Program
                     {
                         new [] // first row
                         {
-                            InlineKeyboardButton.WithUrl("Расписание на сегодня ","https://clck.ru/39eZDB"),
-                            InlineKeyboardButton.WithCallbackData("☣что сегодня в столовке☣","button2"),
+                            InlineKeyboardButton.WithUrl(text:"Расписание на сегодня ","https://clck.ru/39eZDB"),
+                            InlineKeyboardButton.WithCallbackData("☣что сегодня в столовке☣",callbackData:"button2"),
                         },
                         new [] // second row
                         {
-                            InlineKeyboardButton.WithCallbackData("🎰 Игра Орел Решка 🎰","button3"),
-                          
-                            InlineKeyboardButton.WithCallbackData("Анекдоты"),
+                            InlineKeyboardButton.WithCallbackData("🎰 Игра Орел Решка 🎰",callbackData:"button3"),
+
+                            InlineKeyboardButton.WithCallbackData("Анекдоты", callbackData: "button4"),
 
                         }
                     });
         await botClient.SendTextMessageAsync(ChatId, " Привет что хочешь ?", replyMarkup: keyboardInline);
         return;
+    }
+    public static async Task ButtonInlineClickProcessing(ITelegramBotClient botClient, Update update)
+    {   //CancellationToken cancellationToken = new CancellationToken();
+
+        //  var message = update.Message;
+        //  var ChatId = message!.Chat.Id;
+        //  var user = message.From;
+
+        //switch(update.Type) 
+        //{
+        //    case UpdateType.CallbackQuery:
+        //        {
+        //            var callbackQuery = update.CallbackQuery;
+        //            var User = callbackQuery!.From;
+        //            var chat = callbackQuery.Message!.Chat;
+        //            switch (callbackQuery.Data)
+        //            {
+        //                case "1":
+        //                    {
+        //                        await botClient.SendTextMessageAsync(ChatId, "Привт зайка");
+        //                        return;
+        //                    }
+        //            }
+
+        //        }
+        //        break;
+        //}
+
+        //if(update.CallbackQuery!.Data == "button1")
+        //{
+        //    await botClient.SendTextMessageAsync(update.CallbackQuery.Message!.Chat.Id, "Привет соска" ,cancellationToken: cancellationToken);
+        //        return;
+        //}
+
+        Console.WriteLine($"нажал на кнопку:");
+        switch (update.Type)
+        {
+            case UpdateType.CallbackQuery:
+                var callbackQuery = update.CallbackQuery;
+                var user = callbackQuery.From;
+                Console.WriteLine($"{user.FirstName} ({user.Id}) нажал на кнопку: {callbackQuery.Data}");
+                var chat = callbackQuery.Message.Chat;
+                switch (callbackQuery.Data)
+                {
+                    case "button1":
+                        {
+                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+                            await botClient.SendTextMessageAsync(chat.Id, "ты нажал на кнопку 1");
+                            return;
+                        }
+                    case "button2":
+                        {
+
+                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Тут может быть ваш текст!");
+                            await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
+                            return;
+                        }
+                    case "button3":
+                        {
+                            // А тут мы добавили еще showAlert, чтобы отобразить пользователю полноценное окно
+                            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "А это полноэкранный текст!", showAlert: true);
+                            await botClient.SendTextMessageAsync(chat.Id, $"Вы нажали на {callbackQuery.Data}");
+                            return;
+                        }
+                }
+                return;
+                //if (update.Type == UpdateType.CallbackQuery)
+                //{
+                //    CallbackQuery callbackQuery = update.CallbackQuery!;
+                //    Console.WriteLine("ну Привет ");
+                //}
+                //else
+                //{
+                //    return;
+                //}
+
+        }
 
     }
     async static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
@@ -173,79 +248,12 @@ partial class Program
                             });
         await botClient.SendTextMessageAsync(ChatId, "Привет", replyMarkup: replyKeyboardMarkup);
     }
-  
 
 
-    public async static Task ButtonInlineClickProcessing(ITelegramBotClient botClient, Update update)
-    {   //CancellationToken cancellationToken = new CancellationToken();
-     
-      //  var message = update.Message;
-      //  var ChatId = message!.Chat.Id;
-      //  var user = message.From;
-
-        //switch(update.Type) 
-        //{
-        //    case UpdateType.CallbackQuery:
-        //        {
-        //            var callbackQuery = update.CallbackQuery;
-        //            var User = callbackQuery!.From;
-        //            var chat = callbackQuery.Message!.Chat;
-        //            switch (callbackQuery.Data)
-        //            {
-        //                case "1":
-        //                    {
-        //                        await botClient.SendTextMessageAsync(ChatId, "Привт зайка");
-        //                        return;
-        //                    }
-        //            }
-
-        //        }
-        //        break;
-        //}
-        
-            //if(update.CallbackQuery!.Data == "button1")
-            //{
-            //    await botClient.SendTextMessageAsync(update.CallbackQuery.Message!.Chat.Id, "Привет соска" ,cancellationToken: cancellationToken);
-            //        return;
-            //}
-            switch(update.Type) 
-        
-            {
-                case UpdateType.CallbackQuery:
-                    var callbackQuery = update.CallbackQuery;
-                    var user = callbackQuery.From;
-                    Console.WriteLine($"{user.FirstName} ({user.Id}) нажал на кнопку: {callbackQuery.Data}");
-                    var chat = callbackQuery.Message.Chat;
-                    switch (callbackQuery.Data)
-                    {
-                        case "button1":
-                            {
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                                await botClient.SendTextMessageAsync(chat.Id,"ты нажал на кнопку 1");
                                 return;
-                            }
-                        case "button2":
-                            {
-                          
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "Тут может быть ваш текст!");
-                                await botClient.SendTextMessageAsync(chat.Id,$"Вы нажали на {callbackQuery.Data}");
-                                return;
-                            }
-                        case "button3":
-                            {
-                                // А тут мы добавили еще showAlert, чтобы отобразить пользователю полноценное окно
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id, "А это полноэкранный текст!", showAlert: true);
-                                await botClient.SendTextMessageAsync( chat.Id,$"Вы нажали на {callbackQuery.Data}");
-                                return;
-                            }
-                    }
-                return;
-               
-            }
-        
 
-    }
 }
+
 
 
 
@@ -392,3 +400,10 @@ partial class Program
 //        Console.WriteLine(ex.ToString());
 //    }
 //}
+
+// Удаление реплей клавиатуры 
+//Message sentMessage = await botClient.SendTextMessageAsync(
+//    chatId: chatId,
+//    text: "Removing keyboard",
+//    replyMarkup: new ReplyKeyboardRemove(),
+//    cancellationToken: cancellationToken);
